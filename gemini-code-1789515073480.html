@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exhaustive 100-Question MAPEH Quiz</title>
+    <style>
+        :root {
+            --bg-color: #f0f4f8;
+            --card-bg: #ffffff;
+            --primary: #1a365d;
+            --accent: #2b6cb0;
+            --correct: #2f855a;
+            --incorrect: #c53030;
+            --text: #2d3748;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .quiz-container {
+            background-color: var(--card-bg);
+            width: 100%;
+            max-width: 850px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #e2e8f0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--accent);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-card {
+            margin-bottom: 25px;
+        }
+
+        .question-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 18px;
+            color: var(--primary);
+            line-height: 1.4;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background-color: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px 18px;
+            font-size: 0.95rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text);
+        }
+
+        .option-btn:hover:not([disabled]) {
+            background-color: #edf2f7;
+            border-color: #cbd5e0;
+        }
+
+        .option-btn.selected-correct {
+            background-color: #c6f6d5;
+            border-color: var(--correct);
+            color: #22543d;
+            font-weight: bold;
+        }
+
+        .option-btn.selected-incorrect {
+            background-color: #fed7d7;
+            border-color: var(--incorrect);
+            color: #742a2a;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #2c5282;
+        }
+
+        .btn:disabled {
+            background-color: #cbd5e0;
+            cursor: not-allowed;
+        }
+
+        .results-section {
+            text-align: center;
+            display: none;
+        }
+
+        .score-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--accent);
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div id="quiz-screen">
+        <h1>MAPEH Complete Reviewer Quiz</h1>
+        <div class="subtitle">Exhaustive 100-Item Assessment</div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-title" id="question-text">Question loading...</div>
+            <div class="options-container" id="options-container"></div>
+        </div>
+
+        <div class="controls">
+            <span id="question-counter">Question 1 of 100</span>
+            <button class="btn" id="next-btn" onclick="nextQuestion()" disabled>Next</button>
+        </div>
+    </div>
+
+    <div id="results-screen" class="results-section">
+        <h1>Quiz Complete!</h1>
+        <p>Your final score is:</p>
+        <div class="score-display" id="final-score">0 / 100</div>
+        <p id="feedback-text"></p>
+        <button class="btn" onclick="restartQuiz()">Restart Quiz</button>
+    </div>
+</div>
+
+<script>
+const quizData = [
+    // --- LESSON 1: ART, MEDIA & CREATIVE INDUSTRIES ---
+    { question: "What Latin word does 'Art' originate from?", options: ["Ars", "Medium", "Zeitgeist", "Medius"], correct: 0 },
+    { question: "The word 'ars' in Latin translates directly to:", options: ["Vision or Mind", "Skill or Craft", "Beauty or Harmony", "Story or Play"], correct: 1 },
+    { question: "Art captures the 'spirit of the times'. What German term is used in the reviewer for this concept?", options: ["Bauhaus", "Gestalt", "Zeitgeist", "Kitsch"], correct: 2 },
+    { question: "Paintings, drawings, and sculptures belong to which Media category?", options: ["Literary Arts", "Performing Arts", "Visual Arts", "Digital Content"], correct: 2 },
+    { question: "Creative writing, poetry, prose, and dramatic scripts are categorized under:", options: ["Visual Arts", "Literary Arts", "Performing Arts", "Media Literacy"], correct: 1 },
+    { question: "Music, dance, theater, and film are classified under which Media category?", options: ["Performing Arts", "Visual Arts", "Literary Arts", "Interactive Media"], correct: 0 },
+    { question: "The word 'Media' is the plural form of which Latin word?", options: ["Medius", "Mediae", "Medium", "Medial"], correct: 2 },
+    { question: "The Latin word 'Medium' literally means:", options: ["Communication", "Middle or Intermediate", "Broadcasting", "Channel"], correct: 1 },
+    { question: "Which of the following is NOT listed as one of the 4 main functions of media?", options: ["Informing", "Educating", "Entertaining", "Commercializing"], correct: 3 },
+    { question: "Newspapers, magazines, and books represent the oldest form of media known as:", options: ["Print Media", "Broadcast Media", "Digital Media", "Interactive Media"], correct: 0 },
+    { question: "Information delivered over airwaves or cables such as TV and radio is called:", options: ["Print Media", "Broadcast Media", "Digital Media", "Social Media"], correct: 1 },
+    { question: "Social media platforms, websites, blogs, and podcasts belong to:", options: ["Broadcast Media", "Print Media", "Digital Media", "Analog Media"], correct: 2 },
+    { question: "The ability to access, analyze, evaluate, and create media is defined as:", options: ["Digital Marketing", "Media Literacy", "Design Thinking", "Cultural Expression"], correct: 1 },
+    { question: "An activity, content, or performance designed to provide amusement is called:", options: ["Design", "Entertainment", "Craftsmanship", "Art"], correct: 1 },
+    { question: "Design is described as an intentional, goal-oriented process of:", options: ["Creating random beauty", "Planning, conceiving, and organizing elements", "Expressing pure unguided emotion", "Marketing consumer goods"], correct: 1 },
+    { question: "What are the 4 steps of the Design Process in order?", options: ["Identify, Research, Ideate, Execute", "Ideate, Identify, Execute, Research", "Research, Identify, Ideate, Execute", "Identify, Ideate, Execute, Research"], correct: 0 },
+    { question: "Any information formatted, stored, and consumed in machine-readable format is:", options: ["Cultural Products", "Digital Content", "Print Media", "Broadcast Data"], correct: 1 },
+    { question: "Which of the following is NOT one of the 3 formats of Digital Content listed?", options: ["Textual", "Audio/Video", "Interactive", "Physical"], correct: 3 },
+    { question: "Tangible/intangible items, experiences, and artifacts produced by a society that communicate its values and identity are:", options: ["Mass Market Products", "Cultural Products", "Digital Media", "Haute Couture"], correct: 1 },
+    { question: "What does OPM stand for in the Philippine Music Industry?", options: ["Original Philippines Music", "Official Pinoy Music", "Original Pinoy Media", "Organized Philippine Music"], correct: 0 },
+    { question: "Which fast-growing music genre in the Philippines is specifically highlighted under OPM?", options: ["Pinoy Rock", "Pinoy Pop", "Manila Sound", "Pinoy Hip-Hop"], correct: 1 },
+    { question: "Which decade was known as the Golden Age of Philippine Cinema due to high film production?", options: ["1930s-1940s", "1950s-1960s", "1970s-1980s", "1990s-2000s"], correct: 1 },
+
+    // --- DIRECTORS, THEATER, ANIMATION & FASHION ---
+    { question: "Who directed the 1975 film 'Maynila sa Kuko ng Liwanag'?", options: ["Ishmael Bernal", "Gerardo de Leon", "Lino Brocka", "Brillante Mendoza"], correct: 2 },
+    { question: "Lino Brocka's films are famous for depicting:", options: ["Historical fantasy and folklore", "Realities of poverty, injustice, and social issues", "Lighthearted romantic comedies", "Mural aesthetics"], correct: 1 },
+    { question: "Who directed the iconic 1982 film 'Himala' starring Nora Aunor?", options: ["Lino Brocka", "Ishmael Bernal", "Gerardo de Leon", "Lav Diaz"], correct: 1 },
+    { question: "Which National Artist for Cinema directed 'Noli Me Tangere' (1961)?", options: ["Gerardo de Leon", "Lino Brocka", "Ishmael Bernal", "Mikhail Red"], correct: 0 },
+    { question: "Which agency supports Filipino filmmakers and develops the local film industry?", options: ["MTRCB", "FDCP", "PULP", "QCinema"], correct: 1 },
+    { question: "Which board reviews and classifies film and television programs in the Philippines?", options: ["FDCP", "MTRCB", "Live Nation", "PCSC"], correct: 1 },
+    { question: "Who are considered the heart of theater on stage?", options: ["Directors", "Playwrights", "Performers", "Scenic Designers"], correct: 2 },
+    { question: "Which theater element involves creating the script, dialogue, and structure?", options: ["Directing", "Playwriting", "Scenic Design", "Lighting Design"], correct: 1 },
+    { question: "Who bridges the gap between the script and the stage in theater?", options: ["The Director", "The Performers", "The Audience", "The Producer"], correct: 0 },
+    { question: "Building the physical world of a play is called:", options: ["Costume Design", "Scenic Design", "Lighting Design", "Stage Directing"], correct: 1 },
+    { question: "Which serious theater genre explores deep human suffering?", options: ["Comedy", "Tragedy", "Drama", "Musical Theater"], correct: 1 },
+    { question: "Realistic plays focusing on serious, real-world issues are classified as:", options: ["Tragedy", "Comedy", "Drama", "Musical Theater"], correct: 2 },
+    { question: "Drawing every single frame by hand is known as:", options: ["3D Computer Animation", "Stop Motion", "Traditional Animation", "Motion Graphics"], correct: 2 },
+    { question: "Creating digital models in a 3D space and moving them using digital skeletons is:", options: ["Traditional Animation", "3D Computer Animation", "Stop Motion", "Motion Graphics"], correct: 1 },
+    { question: "Physically manipulating real-world objects frame-by-frame is called:", options: ["Stop Motion", "Motion Graphics", "2D Animation", "CGI"], correct: 0 },
+    { question: "Moving text, shapes, and logos in video production is categorized as:", options: ["Stop Motion", "Motion Graphics", "3D Modeling", "Traditional Animation"], correct: 1 },
+    { question: "What element does Gaming add to animation that allows users to control action?", options: ["High Frame Rate", "Interactivity", "Realism", "Audio Tracks"], correct: 1 },
+    { question: "What is the highest fashion tier involving exclusive, hand-sewn, custom garments?", options: ["Prêt-à-Porter", "Mass Market", "Haute Couture", "Fast Fashion"], correct: 2 },
+    { question: "High-quality, designer clothing that is machine-made and sold finished is:", options: ["Haute Couture", "Prêt-à-Porter", "Mass Market", "Custom Wear"], correct: 1 },
+    { question: "The largest fashion tier where trendy designs are rapidly manufactured is:", options: ["Haute Couture", "Prêt-à-Porter", "Mass Market", "Atelier"], correct: 2 },
+    { question: "What are the 3 main goals of Advertising listed in the document?", options: ["Inform, Persuade, Remind", "Sell, Profit, Expand", "Design, Create, Distribute", "Hook, Hold, Convert"], correct: 0 },
+    { question: "Artistic expression combining two or more different media is called:", options: ["Visual Art", "Multimedia Art", "Digital Content", "Cultural Product"], correct: 1 },
+    { question: "What Republic Act is the 'Philippine Creative Industries Development Act of 2022'?", options: ["RA 11904", "RA 11210", "RA 9710", "RA 11148"], correct: 0 },
+    { question: "Which precursor movement in the mid-1970s featured Hotdog and VST & Company?", options: ["Pinoy Rock Explosion", "The Manila Sound", "Golden Era of Ballads", "Modern OPM"], correct: 1 },
+    { question: "In which period was the term 'OPM' officially coined?", options: ["Mid-1970s", "Late 1970s-1980s (Golden Era of Ballads)", "1990s Pinoy Rock Explosion", "2010s Present"], correct: 1 },
+    { question: "Which promoter is the primary engine behind stadium-level international concert acts?", options: ["PULP Live World", "Live Nation", "Wilbros Live", "Sinag Maynila"], correct: 1 },
+    { question: "Who leads PULP Live World, the pioneer of the K-Pop explosion in the Philippines?", options: ["Happee Sy-Go", "Rajo Laurel", "Antoinette Jadaone", "Patis Tesoro"], correct: 0 },
+    { question: "Which promoter produces a diverse mix of concert entertainment in the Philippines?", options: ["Wilbros Live", "Cinemalaya", "MTRCB", "Live Nation"], correct: 0 },
+    { question: "Filmmaker Brillante Mendoza is known for:", options: ["Long-form historical epics", "Realistic portrayals of Filipino society and poverty", "Romantic comedy blockbusters", "Sci-fi animation"], correct: 1 },
+    { question: "Filmmaker Lav Diaz is famous for:", options: ["Extremely long-form films on Philippine history and culture", "Short commercial thrillers", "Action cinema", "K-pop documentaries"], correct: 0 },
+    { question: "Who directed the film 'Fan Girl'?", options: ["Mikhail Red", "Antoinette Jadaone", "Lav Diaz", "Brillante Mendoza"], correct: 1 },
+    { question: "Who represents the new generation of Filipino independent filmmakers with films like 'Birdshot'?", options: ["Mikhail Red", "Lino Brocka", "Ishmael Bernal", "Gerardo de Leon"], correct: 0 },
+    { question: "Which historical independent film centers on General Antonio Luna?", options: ["Ang Babaeng Humayo", "Heneral Luna", "Respeto", "Birdshot"], correct: 1 },
+    { question: "Which Lav Diaz film gained major international acclaim starring Charo Santos?", options: ["Ang Babaeng Humayo", "Heneral Luna", "Respeto", "Fan Girl"], correct: 0 },
+    { question: "Which independent film combines hip-hop culture with social commentary?", options: ["Respeto", "Birdshot", "Himala", "Fan Girl"], correct: 0 },
+    { question: "What is the Philippines' most prominent festival for independent filmmakers?", options: ["QCinema", "Sinag Maynila", "Cinemalaya", "FDCP Expo"], correct: 2 },
+    { question: "Who is known as the 'Grand Dame of Philippine Fashion'?", options: ["Patis Tesoro", "Rajo Laurel", "Mak Tumang", "Rian Fernandez"], correct: 0 },
+    { question: "Which designer is known for blending contemporary fashion with traditional Filipino textiles?", options: ["Rajo Laurel", "Patis Tesoro", "Mak Tumang", "Rian Fernandez"], correct: 0 },
+    { question: "Who designed the iconic 'Lava Gown' for Miss Universe Catriona Gray?", options: ["Mak Tumang", "Rian Fernandez", "Patis Tesoro", "Rajo Laurel"], correct: 0 },
+    { question: "Which designer is recognized for elegant pageant and evening gowns alongside Mak Tumang?", options: ["Rian Fernandez", "Ishmael Bernal", "Happee Sy-Go", "Gerardo de Leon"], correct: 0 },
+
+    // --- LESSON 2: ELEMENTS, PRINCIPLES & PAINTERS ---
+    { question: "Lines running flatly from left to right are called:", options: ["Vertical Lines", "Horizontal Lines", "Diagonal Lines", "Spiral Lines"], correct: 1 },
+    { question: "Lines that slant at an angle between horizontal and vertical are called:", options: ["Diagonal Lines", "Zigzag Lines", "Curved Lines", "Loopy Lines"], correct: 0 },
+    { question: "Continuous coiling curved lines that expand or contract are:", options: ["Spiral Lines", "Zigzag Lines", "Loopy Lines", "Curved Lines"], correct: 0 },
+    { question: "Short, sharp lines that turn abruptly are:", options: ["Curved Lines", "Zigzag Lines", "Spiral Lines", "Diagonal Lines"], correct: 1 },
+    { question: "Precise, mathematical figures like circles and squares are classified as:", options: ["Organic Shapes", "Geometric Shapes", "Implied Shapes", "Negative Shapes"], correct: 1 },
+    { question: "Flat, closed figures with only 2 dimensions (length and width) are:", options: ["3D Shapes", "2D Shapes", "Organic Forms", "Value Structures"], correct: 1 },
+    { question: "Irregular, free-flowing shapes inspired by nature are:", options: ["Geometric Shapes", "Organic Shapes", "Symmetrical Shapes", "Radial Shapes"], correct: 1 },
+    { question: "Sir Isaac Newton's experiments with light and prisms occurred in the:", options: ["1550s", "1660s", "1770s", "1880s"], correct: 1 },
+    { question: "Newton proved white light is actually composed of:", options: ["Pure colorless light", "A combination of all rainbow colors", "Primary pigments", "Infrared waves"], correct: 1 },
+    { question: "Texture that can be physically felt by touch is called:", options: ["Implied Texture", "Actual Texture", "Visual Texture", "Negative Texture"], correct: 1 },
+    { question: "Texture that only appears visual but cannot be physically felt is:", options: ["Actual Texture", "Implied Texture", "Tactile Texture", "3D Texture"], correct: 1 },
+    { question: "The lightness or darkness of a color refers to its:", options: ["Hue", "Saturation", "Value", "Space"], correct: 2 },
+    { question: "The empty area surrounding the main subject in artwork is called:", options: ["Positive Space", "Negative Space", "Radial Space", "Implied Space"], correct: 1 },
+    { question: "Which creative standard emphasizes original and innovative ideas?", options: ["Creativity", "Functionality", "Craftsmanship", "Aesthetic Value"], correct: 0 },
+    { question: "Which principle of design distributes visual weight equally on both sides?", options: ["Symmetrical Balance", "Asymmetrical Balance", "Radial Balance", "Contrast"], correct: 0 },
+    { question: "When elements spread outward from a central point, it is:", options: ["Symmetrical Balance", "Asymmetrical Balance", "Radial Balance", "Pattern"], correct: 2 },
+    { question: "Placing opposite elements together to create difference uses:", options: ["Emphasis", "Contrast", "Rhythm", "Unity"], correct: 1 },
+    { question: "Creating a focal point to attract viewer attention first is:", options: ["Emphasis", "Movement", "Pattern", "Balance"], correct: 0 },
+    { question: "Guiding the viewer's eye through an artwork is called:", options: ["Rhythm", "Movement", "Pattern", "Unity"], correct: 1 },
+    { question: "Repeated arrangement of elements in a predictable manner is:", options: ["Rhythm", "Pattern", "Contrast", "Emphasis"], correct: 1 },
+    { question: "The feeling that all parts of an artwork belong together seamlessly is:", options: ["Unity", "Emphasis", "Contrast", "Movement"], correct: 0 },
+    { question: "Who was known as the 'Grand Old Man of Philippine Art'?", options: ["Juan Luna", "Fernando Amorsolo", "Carlos Francisco", "Lino Brocka"], correct: 1 },
+    { question: "Fernando Amorsolo was famous for mastering natural sunlight, known as:", options: ["Chiaroscuro", "Backlighting", "Sfumato", "Impasto"], correct: 1 },
+    { question: "What is considered Fernando Amorsolo's most celebrated masterpiece?", options: ["Planting Rice", "Fruit Gatherer", "The Making of the Philippine Flag", "Spoliarium"], correct: 0 },
+    { question: "Who were the three women depicted sewing the flag in Amorsolo's painting?", options: ["Marcela Agoncillo, Lorenza Agoncillo, Delfina Herbosa de Natividad", "Melchora Aquino, Marina Dizon, Gregoria de Jesus", "Josefa Llanes Escoda, Teresa Magbanua, Trinidad Tecson", "Marcela Agoncillo, Teodora Alonso, Lorenza Agoncillo"], correct: 0 },
+    { question: "Juan Luna won a gold medal at the 1884 Exposición Nacional de Bellas Artes in Madrid for:", options: ["The Parisian Life", "Spoliarium", "The Death of Cleopatra", "Planting Rice"], correct: 1 },
+    { question: "What does Luna's 'Spoliarium' depict?", options: ["Dead gladiators being dragged into a Roman basement", "A quiet coffee shop in Paris", "Egyptian queen's suicide", "Filipino farmers planting rice"], correct: 0 },
+    { question: "Juan Luna's 'The Death of Cleopatra' won which medal in Madrid?", options: ["Gold Medal", "Silver Medal", "Bronze Medal", "Honorable Mention"], correct: 1 },
+    { question: "Carlos 'Botong' Francisco revived which art form in the Philippines?", options: ["Mural Painting", "Glass Sculpting", "Wood Carving", "Pottery"], correct: 0 },
+    { question: "Botong Francisco painted 'The Invasion of Limahong' depicting resistance against a warlord from which country?", options: ["Japan", "China", "Spain", "Holland"], correct: 1 },
+    { question: "A cover song using acoustic instruments to provide softer sounds is an:", options: ["Acoustic Cover", "Band Cover", "Solo Vocal Cover", "Instrumental Cover"], correct: 0 },
+    { question: "A visual communication tool designed to inform, advertise, or promote a message is a:", options: ["Poster", "Mural", "Frame", "Script"], correct: 0 },
+    { question: "Which Quality Standard refers to the level of skill, care, precision, and technical quality?", options: ["Originality", "Craftsmanship", "Functionality", "Audience Impact"], correct: 1 },
+    { question: "Social media platforms like Facebook and LinkedIn are categorized under:", options: ["Social Networking", "Media Sharing", "Microblogging", "Discussion Forums"], correct: 0 },
+    { question: "Publishing photos or videos on Instagram, TikTok, and YouTube is classified as:", options: ["Social Networking", "Media Sharing", "Microblogging", "Discussion Forums"], correct: 1 },
+    { question: "Quick, short-form text updates on platforms like X are called:", options: ["Microblogging", "Media Sharing", "Discussion Forums", "VOD"], correct: 0 },
+    { question: "On-demand platforms like Netflix, Disney+, and Prime Video are known as:", options: ["VOD (Video-on-Demand)", "Live Streaming", "Microblogging", "Discussion Forums"], correct: 0 },
+
+    // --- LESSON 3 & 4: E-SPORTS, HEALTH & LAWS ---
+    { question: "Early computer game 'Spacewar' (1962) was developed by Steve Russell and programmers from:", options: ["Stanford", "MIT", "Harvard", "Oxford"], correct: 1 },
+    { question: "The first known video game tournament, 'Intergalactic Spacewar Olympics' (1972), was held at:", options: ["MIT", "Stanford University", "Atari HQ", "Tokyo Dome"], correct: 1 },
+    { question: "What exact date was the Intergalactic Spacewar Olympics held at Stanford?", options: ["October 19, 1972", "December 7, 1962", "May 30, 1980", "August 15, 1975"], correct: 0 },
+    { question: "Which major arcade tournament was organized by Atari in 1980?", options: ["Pac-Man Championship", "Space Invaders Championship", "Donkey Kong World Cup", "Spacewar Open"], correct: 1 },
+    { question: "How long does the prenatal stage (pregnancy) typically last?", options: ["6 weeks", "9 months / 40 weeks", "1000 days", "30 weeks"], correct: 1 },
+    { question: "How long does the postpartum phase after childbirth typically last?", options: ["2 weeks", "6 weeks", "3 months", "6 months"], correct: 1 },
+    { question: "Severe high blood pressure during pregnancy accompanied by organ damage is:", options: ["Gestational Hypertension", "Preeclampsia", "Gestational Diabetes", "Maternal Anemia"], correct: 1 },
+    { question: "An excess of which substance causes skin/eye yellowing in Neonatal Jaundice?", options: ["Insulin", "Folic Acid", "Bilirubin", "Hemoglobin"], correct: 2 },
+    { question: "Childhood malnutrition manifesting as low height-for-age is:", options: ["Stunting", "Wasting", "Anemia", "Rickets"], correct: 0 },
+    { question: "Childhood malnutrition manifesting as low weight-for-height is:", options: ["Stunting", "Wasting", "Croup", "Sepsis"], correct: 1 },
+    { question: "Which nutrient is critical before conception and during early pregnancy to prevent neural tube defects?", options: ["Folic Acid", "Calcium", "Iron", "Vitamin D"], correct: 0 },
+    { question: "The process of the uterus returning to its original size after childbirth is:", options: ["Lochia", "Uterine Involution", "Mastitis", "Endometritis"], correct: 1 },
+    { question: "Which law is RA 9262 (Act of 2004)?", options: ["Anti-VAWC Act (Protects women and children from abuse)", "Child Labor Protection Act", "First 1,000 Days Law", "Expanded Maternity Leave Law"], correct: 0 },
+    { question: "Which law is RA 7610 (Act of 1992)?", options: ["Safeguarding children against child abuse and labor", "Anti-Trafficking Act", "Online Abuse Act", "Magna Carta of Women"], correct: 0 },
+    { question: "Which law penalizes recruitment, transportation, or adoption of women/children for illegal work (RA 9208 amended by RA 10364)?", options: ["Anti-Trafficking in Persons Act", "Anti-VAWC Act", "First 1,000 Days Law", "Adoption Act"], correct: 0 },
+    { question: "Which law targets online abuse of children (RA 11930)?", options: ["Anti-Online Sexual Abuse or Exploitation of Children Act", "Anti-VAWC Act", "Magna Carta of Women", "Reproductive Health Law"], correct: 0 },
+    { question: "Which law is known as the 'First 1,000 Days Law'?", options: ["RA 11148", "RA 11210", "RA 10354", "RA 10028"], correct: 0 },
+    { question: "RA 11210 grants working mothers how many days of fully paid maternity leave?", options: ["60 days", "90 days", "105 days", "120 days"], correct: 2 },
+    { question: "Which law guarantees universal access to reproductive healthcare (RA 10354)?", options: ["Responsible Parenthood and Reproductive Health Act", "Magna Carta of Women", "First 1,000 Days Law", "Single Parents Act"], correct: 0 },
+    { question: "Which law mandates lactation stations in public and private workplaces (RA 10028)?", options: ["Expanded Breastfeeding Promotion Act", "Expanded Maternity Leave Act", "Single Parents Act", "VAWC Act"], correct: 0 },
+    { question: "Which law provides enhanced financial support for single parents (RA 11861)?", options: ["Expanded Solo Parents Welfare Act", "Magna Carta of Women", "Expanded Maternity Leave Act", "Adoption Act"], correct: 0 },
+    { question: "Which law guarantees non-discrimination and safeguards women's rights (RA 9710)?", options: ["Magna Carta of Women", "Anti-VAWC Act", "Reproductive Health Law", "First 1,000 Days Law"], correct: 0 },
+    { question: "Which law passed in 2022 simplified and expedited the legal adoption process in the Philippines?", options: ["RA 11642", "RA 11930", "RA 11861", "RA 11904"], correct: 0 }
+];
+
+let currentQuestionIndex = 0;
+let score = 0;
+let selectedOption = null;
+
+const questionText = document.getElementById('question-text');
+const optionsContainer = document.getElementById('options-container');
+const nextBtn = document.getElementById('next-btn');
+const progressFill = document.getElementById('progress-fill');
+const questionCounter = document.getElementById('question-counter');
+
+function loadQuestion() {
+    selectedOption = null;
+    nextBtn.disabled = true;
+    
+    const q = quizData[currentQuestionIndex];
+    questionText.textContent = `${currentQuestionIndex + 1}. ${q.question}`;
+    
+    optionsContainer.innerHTML = '';
+    q.options.forEach((opt, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = opt;
+        btn.onclick = () => selectOption(index, btn);
+        optionsContainer.appendChild(btn);
+    });
+
+    questionCounter.textContent = `Question ${currentQuestionIndex + 1} of ${quizData.length}`;
+    progressFill.style.width = `${((currentQuestionIndex) / quizData.length) * 100}%`;
+}
+
+function selectOption(index, button) {
+    if (selectedOption !== null) return;
+    
+    selectedOption = index;
+    const correctIndex = quizData[currentQuestionIndex].correct;
+    const buttons = optionsContainer.children;
+
+    if (index === correctIndex) {
+        button.classList.add('selected-correct');
+        score++;
+    } else {
+        button.classList.add('selected-incorrect');
+        buttons[correctIndex].classList.add('selected-correct');
+    }
+
+    for (let btn of buttons) {
+        btn.disabled = true;
+    }
+
+    nextBtn.disabled = false;
+}
+
+function nextQuestion() {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < quizData.length) {
+        loadQuestion();
+    } else {
+        showResults();
+    }
+}
+
+function showResults() {
+    document.getElementById('quiz-screen').style.display = 'none';
+    document.getElementById('results-screen').style.display = 'block';
+    document.getElementById('final-score').textContent = `${score} / ${quizData.length}`;
+    
+    const percentage = (score / quizData.length) * 100;
+    let feedback = "";
+    if (percentage >= 90) feedback = "Flawless Mastery! You know every single line item across all 14 pages!";
+    else if (percentage >= 75) feedback = "Great job! High proficiency across all MAPEH sections.";
+    else if (percentage >= 50) feedback = "Solid effort! Re-read the missed terms in the reviewer and try again.";
+    else feedback = "Keep studying! Review the document thoroughly and take the quiz again.";
+    
+    document.getElementById('feedback-text').textContent = feedback;
+}
+
+function restartQuiz() {
+    currentQuestionIndex = 0;
+    score = 0;
+    document.getElementById('results-screen').style.display = 'none';
+    document.getElementById('quiz-screen').style.display = 'block';
+    loadQuestion();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>
